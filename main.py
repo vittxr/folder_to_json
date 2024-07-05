@@ -60,6 +60,15 @@ def output(data: dict[str, Any], type: Literal["file", "stdout"]) -> None:
 
 folder_path = "path/to/folder"
 folder_json = create_folder_structure_json(
-    path=folder_path, ignore=["__pycache__", "venv", ".git"]
+    path=folder_path,
+    ignore=[
+        "__pycache__",
+        "venv",
+        ".git",
+        "node_modules",
+        ".vscode",
+        ".VSCodeCounter",
+        ".pytest_cache",
+    ],
 )
 output(data=folder_json, type="file")
