@@ -66,7 +66,7 @@ def output(
         return print(json.dumps(data, indent=4))
 
 
-folder_path = "C:/Trabalhos/Trabalhos/portal_vendas/portal-vendas-backend-v2"
+folder_path = "path/to/example"
 ignore = [
     "__pycache__",
     "venv",
