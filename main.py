@@ -3,13 +3,16 @@ import json
 from typing import Any, Literal
 
 
-def create_folder_structure_json(path: str, ignore: list[str] = []) -> dict[str, Any]:
+def create_folder_structure_json(
+    path: str, ignore: list[str] = [], ignore_files: bool = False
+) -> dict[str, Any]:
     """
     Recursively creates a dict representation of the folder structure starting from the given path.
 
     Args:
         path (str): The path of the folder to create the JSON structure from.
         ignore (list[str], optional): A list of file or folder names to ignore during the creation of the JSON structure. Defaults to [].
+        ignore_files (bool, optional): Whether to ignore files
 
     Returns:
         dict[str, Any]: A dictionary representing the folder structure in JSON format.
@@ -28,15 +31,20 @@ def create_folder_structure_json(path: str, ignore: list[str] = []) -> dict[str,
 
         if os.path.isdir(entry_path):
             result["children"].append(
-                create_folder_structure_json(entry_path, ignore=ignore)
+                create_folder_structure_json(
+                    entry_path, ignore=ignore, ignore_files=ignore_files
+                )
             )
         else:
-            result["children"].append({"name": entry, "type": "file"})
+            if not ignore_files:
+                result["children"].append({"name": entry, "type": "file"})
 
     return result
 
 
-def output(data: dict[str, Any], type: Literal["file", "stdout"]) -> None:
+def output(
+    data: dict[str, Any] | str, type: Literal["file", "stdout"], output_path: str
+) -> None:
     """
     Writes the given data to a file or prints it to stdout.
 
@@ -50,7 +58,7 @@ def output(data: dict[str, Any], type: Literal["file", "stdout"]) -> None:
         None
     """
     if type == "file":
-        with open("output.json", "w") as f:
+        with open(output_path, "w") as f:
             json.dump(data, f)
         return
 
@@ -58,17 +66,17 @@ def output(data: dict[str, Any], type: Literal["file", "stdout"]) -> None:
         return print(json.dumps(data, indent=4))
 
 
-folder_path = "path/to/folder"
+folder_path = "C:/Trabalhos/Trabalhos/portal_vendas/portal-vendas-backend-v2"
+ignore = [
+    "__pycache__",
+    "venv",
+    ".git",
+    "node_modules",
+    ".vscode",
+    ".VSCodeCounter",
+    ".pytest_cache",
+    "flask_session",
+]
 folder_json = create_folder_structure_json(
-    path=folder_path,
-    ignore=[
-        "__pycache__",
-        "venv",
-        ".git",
-        "node_modules",
-        ".vscode",
-        ".VSCodeCounter",
-        ".pytest_cache",
-    ],
+    path=folder_path, ignore=ignore, ignore_files=True
 )
-output(data=folder_json, type="file")
